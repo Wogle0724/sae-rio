@@ -14,6 +14,7 @@
   color: transparent;
   text-shadow: 0 0 24px rgba(0,255,194,0.15);
   user-select: none;
+  padding: 0.5em;
 }
 .card .subtitle, .card .details, .card .title { display: none !important; }
 @font-face {
@@ -51,6 +52,9 @@ body{
   color: #e9fff6;
   background: radial-gradient(1200px 600px at 50% 120%, #022018 0%, #01150f 50%, #000b07 100%);
   overflow: hidden; /* keep birds within viewport */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Jungle parallax layers: stacked divs with CSS-generated foliage */
@@ -112,7 +116,7 @@ body{
   position: relative;
   z-index: 5;
   max-width: 720px;
-  margin: 12vh auto 0;
+  margin: auto;
   padding: clamp(1rem, 3vw, 2rem);
   background: rgba(0, 26, 20, 0.55);
   border: 1px solid rgba(255,255,255,0.08);

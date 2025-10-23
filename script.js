@@ -1,4 +1,3 @@
-
 // ===== Countdown to 10:30 PM America/Chicago on 2025-10-24 =====
 (function startRioCountdown(){
   const el = document.getElementById('countdown');
@@ -211,13 +210,15 @@ Sprite.load();
     sky.appendChild(div);
   }
 
-  function spawnFrameBird(topPercentOverride){
+  function spawnFrameBird(topPercentOverride, opts = {}){
     const use = Math.random() < 0.5 ? "bird1" : "bird2";
     const frames = FrameBirds[use];
     if(!frames) return;
 
     const img = document.createElement('img');
     img.className = 'frame-bird';
+    const startedAgoMs = Math.max(0, opts.startedAgoMs || 0);
+
     img.src = frames[0];
 
     // motion randomization
@@ -234,6 +235,12 @@ Sprite.load();
     img.style.setProperty('--scale', scale);
     img.style.setProperty('--rot', rot);
     img.style.setProperty('--dur', dur);
+
+    // If this spawn represents one that would have started in the past (while the tab was hidden),
+    // use a negative animation-delay so it appears mid-flight instead of all starting at once.
+    if(startedAgoMs > 0){
+      img.style.animationDelay = `-${(startedAgoMs/1000).toFixed(2)}s`;
+    }
 
     // vertical viewport placement
     const topPercent = (typeof topPercentOverride === 'number') ? topPercentOverride : (Math.random()*60 + 10);
@@ -262,26 +269,46 @@ Sprite.load();
     sky.appendChild(img);
   }
 
-  // Spawn cadence: a bird every 2–4 seconds
-  function loop(){
-    spawnFrameBird();
-    const next = Math.random()*2000 + 2000; // 2000..4000ms
-    setTimeout(loop, next);
-  }
-  loop();
+  // Spawn cadence driven by wall-clock time so it doesn't bottleneck on tab return.
+  (function scheduleSpawner(){
+    const minGap = 2000, maxGap = 4000; // ms
+    let nextAt = Date.now() + (Math.random()*(maxGap-minGap) + minGap);
+    const tickInterval = 250; // ms (will be clamped while hidden, which is OK)
+    const maxCatchUp = 6;     // prevent extreme bursts on very long hides
 
-  function ensureRtlKeyframes(){
-    if(document.getElementById('rtl-style')) return;
-    const style = document.createElement('style');
-    style.id = 'rtl-style';
-    style.textContent = `
-      @keyframes fly-rtl{
-        0%   { transform: translateX(0) translateY(var(--startY, 0)) scaleX(-1) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 0; }
-        5%   { opacity: 1; }
-        100% { transform: translateX(calc(-100vw - 260px)) translateY(var(--endY, 0)) scaleX(-1) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 1; }
-      }`;
-    document.head.appendChild(style);
-  }
+    function planNext(){
+      nextAt += (Math.random()*(maxGap-minGap) + minGap);
+    }
+
+    function tick(){
+      const now = Date.now();
+      // If we're behind schedule (e.g., returning from a hidden tab), spawn as many as we missed,
+      // but apply negative animation delays so they appear already mid-flight.
+      let spawned = 0;
+      while(now >= nextAt && spawned < maxCatchUp){
+        const startedAgoMs = now - nextAt;
+        // Randomize vertical position slightly for each catch-up bird
+        const vh = Math.random()*60 + 10;
+        spawnFrameBird(vh, { startedAgoMs });
+        spawned++;
+        planNext();
+      }
+    }
+
+    // Kick off a steady heartbeat; on hidden tabs this will run slowly, but we compute catch-up using wall-clock time.
+    setInterval(tick, tickInterval);
+  })();
+
+  // Nudge the scheduler immediately when the tab becomes visible.
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible'){
+      // Run one immediate tick by dispatching a microtask
+      Promise.resolve().then(() => {
+        const evt = new Event('spawner-tick');
+        document.dispatchEvent(evt);
+      });
+    }
+  });
 
   // Click anywhere to spawn a small burst of frame birds at the click height
   window.addEventListener('click', (evt) => {
