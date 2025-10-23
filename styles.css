@@ -1,0 +1,246 @@
+
+/* === Countdown Styling === */
+.countdown{
+  font-family: 'Rio', sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  font-size: clamp(2.6rem, 9vw, 7rem);
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  margin: 0.2rem 0;
+  background: linear-gradient(90deg, var(--neon), #7aff7a 50%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 24px rgba(0,255,194,0.15);
+  user-select: none;
+}
+.card .subtitle, .card .details, .card .title { display: none !important; }
+@font-face {
+  font-family: 'Rio';
+  src:
+    url('./assets/RIO.woff2') format('woff2'),
+    url('./assets/RIO.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root{
+  --bg0: #00130b;      /* deep jungle */
+  --bg1: #012116;
+  --bg2: #023522;
+  --leaf1: #0f5f41;
+  --leaf2: #178f60;
+  --leaf3: #0a3f2c;
+  --sunset1: #00a7ff;
+  --sunset2: #00e0b8;
+  --accent: #ffd166;   /* warm highlight */
+  --neon: #00ffc2;
+
+  /* Parallax offsets controlled by JS (mouse/tilt) */
+  --px: 0px;
+  --py: 0px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #e9fff6;
+  background: radial-gradient(1200px 600px at 50% 120%, #022018 0%, #01150f 50%, #000b07 100%);
+  overflow: hidden; /* keep birds within viewport */
+}
+
+/* Jungle parallax layers: stacked divs with CSS-generated foliage */
+.layer{
+  position: fixed;
+  inset: -10vmax; /* bleed outside to hide edges while parallaxing */
+  pointer-events: none;
+  filter: saturate(1.1);
+  transform: translate(calc(var(--px) * 0.02), calc(var(--py) * 0.02));
+  will-change: transform, background-position;
+}
+.layer-0{
+  background:
+    radial-gradient(70vmax 40vmax at 120% -10%, #0a553d, transparent 60%),
+    radial-gradient(60vmax 40vmax at -20% 10%, #063827, transparent 60%),
+    linear-gradient(#00140b, #000e09);
+  z-index: 0;
+}
+.layer-1{
+  z-index: 1;
+  opacity: 0.8;
+  background:
+    repeating-conic-gradient(from 30deg at 10% 80%, var(--leaf3) 0 10deg, transparent 10deg 20deg),
+    repeating-conic-gradient(from -25deg at 90% 70%, var(--leaf1) 0 14deg, transparent 14deg 28deg);
+  background-blend-mode: multiply;
+  transform: translate(calc(var(--px) * 0.03), calc(var(--py) * 0.035));
+}
+.layer-2{
+  z-index: 2;
+  opacity: 0.7;
+  background:
+    radial-gradient(120px 40px at 20% 80%, var(--leaf2), transparent 60%),
+    radial-gradient(200px 50px at 80% 70%, var(--leaf1), transparent 60%),
+    radial-gradient(160px 40px at 40% 60%, var(--leaf3), transparent 60%);
+  mix-blend-mode: screen;
+  transform: translate(calc(var(--px) * -0.015), calc(var(--py) * -0.02));
+  filter: blur(1px);
+}
+.layer-3{
+  z-index: 3;
+  opacity: 0.35;
+  background:
+    repeating-linear-gradient(115deg, #062a1e 0 30px, #032017 30px 60px),
+    radial-gradient(60vmax 40vmax at 50% -10%, rgba(0, 160, 255, 0.2), transparent 60%);
+  transform: translate(calc(var(--px) * 0.06), calc(var(--py) * 0.05));
+}
+
+/* Flying birds host */
+#sky{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Card */
+.card{
+  position: relative;
+  z-index: 5;
+  max-width: 720px;
+  margin: 12vh auto 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: rgba(0, 26, 20, 0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px) saturate(130%);
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+.title{
+  font-family: 'Rio', sans-serif;
+  font-weight: 400;        /* force regular so the browser doesn't look for a bold face */
+  font-synthesis: none;    /* don't fake weight or style */
+  letter-spacing: 1px;
+  margin: 0 0 .1rem;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  background: linear-gradient(90deg, var(--neon), #7aff7a 50%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 24px rgba(0,255,194,0.15);
+}
+
+.title strong{
+  font-weight: 999 !important;
+  font-size: 0.95em;
+}
+.subtitle{
+  margin: .25rem 0 1rem;
+  color: #b9ffe7;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.details{
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  display: grid;
+  gap: .5rem;
+  font-size: clamp(1rem, 2.3vw, 1.1rem);
+}
+.details strong{ color: var(--accent); font-weight: 800; }
+
+.cta-row{
+  display: inline-flex;
+  gap: .75rem;
+}
+.btn{
+  display: inline-block;
+  padding: .75rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: transform .15s ease, background-color .2s ease, border-color .2s ease;
+}
+.btn:hover{ transform: translateY(-1px) scale(1.02); }
+.btn:active{ transform: translateY(0); }
+.btn-primary{
+  background: linear-gradient(180deg, #00ffc2, #0bd49f);
+  color: #00392a;
+}
+.btn-outline{
+  border-color: #00ffc2;
+  color: #d7fff4;
+  background: rgba(0,255,194,0.06);
+}
+.tiny{
+  opacity: .75;
+  margin-top: .85rem;
+  font-size: .85rem;
+}
+
+/* ===== Sprite-sheet birds (PNG) =====
+   Expected layout: 2 rows x 8 columns (two birds, eight frames each).
+   Place file at ./assets/parrots-sprite.png
+*/
+.sprite-bird{
+  position: absolute;
+  top: 40%;
+  left: -220px;
+  width: var(--frame-w, 220px);   /* set via JS after image loads */
+  height: var(--frame-h, 140px);  /* set via JS after image loads */
+  background-image: var(--sprite-url, url("./assets/parrots-sprite.png"));
+  background-repeat: no-repeat;
+  image-rendering: pixelated; /* crisp steps if scaled */
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+  will-change: background-position, transform;
+  z-index: 999;
+  pointer-events: none;
+  animation:
+    bird-glide linear var(--dur, 14s) forwards,
+    bird-frames steps(var(--cols, 8)) var(--flap-speed, .8s) infinite;
+}
+/* background X steps through the columns; Y chooses the row (0 or 1) */
+@keyframes bird-frames{
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--sprite-w, 1760px) * -1); } /* -sheetWidth to step across */
+}
+/* LTR glide */
+@keyframes bird-glide{
+  0%   { transform: translateX(0) translateY(var(--startY, 0)) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 0; }
+  5%   { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 260px)) translateY(var(--endY, 0)) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 1; }
+}
+/* RTL glide */
+@keyframes bird-glide-rtl{
+  0%   { transform: translateX(0) translateY(var(--startY, 0)) scaleX(-1) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 0; }
+  5%   { opacity: 1; }
+  100% { transform: translateX(calc(-100vw - 260px)) translateY(var(--endY, 0)) scaleX(-1) scale(var(--scale,1)) rotate(var(--rot, 0deg)); opacity: 1; }
+}
+
+/* ===== Frame-by-frame SVG bird styling ===== */
+.frame-bird{
+  position: absolute;
+  top: 40%;
+  left: -240px;
+  width: var(--bird-w, 220px);
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+  pointer-events: none;
+  z-index: 999;
+  will-change: transform;
+  animation: bird-glide linear var(--dur, 14s) forwards;
+}
+.frame-bird.rtl{
+  animation-name: bird-glide-rtl;
+  transform: scaleX(-1);
+  left: calc(100vw + 260px);
+}

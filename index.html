@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ΣAE x RIO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="./styles.css?v=2" />
+  </head>
+  <body>
+    <!-- Parallax Jungle Layers -->
+    <div class="jungle layer layer-0" aria-hidden="true"></div>
+    <div class="jungle layer layer-1" aria-hidden="true"></div>
+    <div class="jungle layer layer-2" aria-hidden="true"></div>
+    <div class="jungle layer layer-3" aria-hidden="true"></div>
+
+    <!-- Flying birds container -->
+    <div id="sky" aria-hidden="true"></div>
+
+    <!-- Center Card with Countdown -->
+    <main class="card" role="main" aria-label="Event details">
+      <div id="countdown" class="countdown" aria-live="polite" aria-label="Countdown to 10:30 Central time on October 24, 2025">00:00:00</div>
+    </main>
+
+
+
+    <script src="./script.js" defer></script>
+    <script>
+      document.fonts.load('1em "Rio"').then(res => {
+        console.log('Rio loaded?', res.length > 0);
+      }).catch(e => console.error('Rio failed to load', e));
+    </script>
+  </body>
+</html>
